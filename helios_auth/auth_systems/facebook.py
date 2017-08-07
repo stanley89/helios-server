@@ -43,7 +43,7 @@ def get_auth_url(request, redirect_url):
   return facebook_url('/oauth/authorize', {
       'client_id': APP_ID,
       'redirect_uri': redirect_url,
-      'scope': 'publish_stream,email,user_groups'})
+      'scope': 'email,user_groups'})
     
 def get_user_info_after_auth(request):
   args = facebook_get('/oauth/access_token', {
@@ -53,7 +53,7 @@ def get_user_info_after_auth(request):
       'code' : request.GET['code']
       })
 
-  access_token = cgi.parse_qs(args)['access_token'][0]
+  access_token = utils.from_json(args)['access_token']
 
   info = utils.from_json(facebook_get('/me', {'access_token':access_token}))
 
@@ -116,3 +116,10 @@ def eligibility_category_id(constraint):
 
 def pretty_eligibility(constraint):
   return "Facebook users who are members of the \"%s\" group" % constraint['group']['name']
+
+#
+# Election Creation
+#
+
+def can_create_election(user_id, user_info):
+  return True

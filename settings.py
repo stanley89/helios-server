@@ -1,9 +1,13 @@
 
 import os, json
 
+# a massive hack to see if we're testing, in which case we use different settings
+import sys
+TESTING = 'test' in sys.argv
+
 # go through environment variables and override them
 def get_from_env(var, default):
-    if os.environ.has_key(var):
+    if not TESTING and os.environ.has_key(var):
         return os.environ[var]
     else:
         return default
@@ -11,8 +15,10 @@ def get_from_env(var, default):
 DEBUG = (get_from_env('DEBUG', '1') == '1')
 TEMPLATE_DEBUG = DEBUG
 
+# add admins of the form: 
+#    ('Ben Adida', 'ben@adida.net'),
+# if you want to be emailed about errors.
 ADMINS = (
-    ('Ben Adida', 'ben@adida.net'),
 )
 
 MANAGERS = ADMINS
@@ -41,8 +47,8 @@ SOUTH_DATABASE_ADAPTERS = {'default':'south.db.postgresql_psycopg2'}
 if get_from_env('DATABASE_URL', None):
     import dj_database_url
     DATABASES['default'] =  dj_database_url.config()
-    DATABASES['default']['ENGINE'] = 'dbpool.db.backends.postgresql_psycopg2'
-    DATABASES['default']['OPTIONS'] = {'MAX_CONNS': 1}
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+    DATABASES['default']['CONN_MAX_AGE'] = 600
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -78,6 +84,12 @@ STATIC_URL = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = get_from_env('SECRET_KEY', 'replaceme')
 
+# If debug is set to false and ALLOWED_HOSTS is not declared, django raises  "CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False."
+# If in production, you got a bad request (400) error
+#More info: https://docs.djangoproject.com/en/1.7/ref/settings/#allowed-hosts (same for 1.6)
+
+ALLOWED_HOSTS = get_from_env('ALLOWED_HOSTS', 'localhost').split(",")
+
 # Secure Stuff
 if (get_from_env('SSL', '0') == '1'):
     SECURE_SSL_REDIRECT = True
@@ -91,7 +103,8 @@ SESSION_COOKIE_HTTPONLY = True
 # one week HSTS seems like a good balance for MITM prevention
 if (get_from_env('HSTS', '0') == '1'):
     SECURE_HSTS_SECONDS = 3600 * 24 * 7
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # not doing subdomains for now cause that is not likely to be necessary and can screw things up.
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -108,6 +121,7 @@ MIDDLEWARE_CLASSES = (
 
     # secure a bunch of things
     'djangosecure.middleware.SecurityMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -127,12 +141,12 @@ INSTALLED_APPS = (
 #    'django.contrib.contenttypes',
     'djangosecure',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    #'django.contrib.sites',
     ## needed for queues
     'djcelery',
     'kombu.transport.django',
-    ## needed for schema migration
-    'south',
+    ## in Django 1.7 we now use built-in migrations, no more south
+    ## 'south',
     ## HELIOS stuff
     'helios_auth',
     'helios',
@@ -166,12 +180,6 @@ URL_HOST = get_from_env("URL_HOST", "http://localhost:8000").rstrip("/")
 # elections, as your elections' cast_url will then be incorrect.
 # SECURE_URL_HOST = "https://localhost:8443"
 SECURE_URL_HOST = get_from_env("SECURE_URL_HOST", URL_HOST).rstrip("/")
-
-# this additional host is used to iframe-isolate the social buttons,
-# which usually involve hooking in remote JavaScript, which could be
-# a security issue. Plus, if there's a loading issue, it blocks the whole
-# page. Not cool.
-SOCIALBUTTONS_URL_HOST= get_from_env("SOCIALBUTTONS_URL_HOST", SECURE_URL_HOST).rstrip("/")
 
 # election stuff
 SITE_TITLE = get_from_env('SITE_TITLE', 'Helios Voting')
@@ -228,6 +236,10 @@ CAS_PASSWORD = get_from_env('CAS_PASSWORD', "")
 CAS_ELIGIBILITY_URL = get_from_env('CAS_ELIGIBILITY_URL', "")
 CAS_ELIGIBILITY_REALM = get_from_env('CAS_ELIGIBILITY_REALM', "")
 
+# Clever
+CLEVER_CLIENT_ID = get_from_env('CLEVER_CLIENT_ID', "")
+CLEVER_CLIENT_SECRET = get_from_env('CLEVER_CLIENT_SECRET', "")
+
 # email server
 EMAIL_HOST = get_from_env('EMAIL_HOST', 'localhost')
 EMAIL_PORT = int(get_from_env('EMAIL_PORT', "2525"))
@@ -261,5 +273,12 @@ djcelery.setup_loader()
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 # this effectively does CELERY_ALWAYS_EAGER = True
 
-SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
-
+# Rollbar Error Logging
+ROLLBAR_ACCESS_TOKEN = get_from_env('ROLLBAR_ACCESS_TOKEN', None)
+if ROLLBAR_ACCESS_TOKEN:
+  print "setting up rollbar"
+  MIDDLEWARE_CLASSES += ('rollbar.contrib.django.middleware.RollbarNotifierMiddleware',)
+  ROLLBAR = {
+    'access_token': ROLLBAR_ACCESS_TOKEN,
+    'environment': 'development' if DEBUG else 'production',  
+  }

@@ -5,3 +5,5 @@ deploy-latest.sh
 media/*
 venv
 celerybeat-*
+env.sh
+.cache
