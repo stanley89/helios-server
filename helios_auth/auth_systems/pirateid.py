@@ -101,3 +101,11 @@ def list_category_members(category_id):
     users.append({'type': 'pirateid', 'id': user[u'username'], 'name': user[u'fullname'], 'info': {'email': user[u'email']}, 'token': {}})
 
   return users
+
+#
+# Election Creation
+#
+
+def can_create_election(user_id, user_info):
+  return True
+
