@@ -269,6 +269,9 @@ import djcelery
 djcelery.setup_loader()
 
 
+SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
+
+
 # for testing
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 # this effectively does CELERY_ALWAYS_EAGER = True
