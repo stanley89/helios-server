@@ -102,6 +102,9 @@ def list_category_members(category_id):
 
   return users
 
+def pretty_eligibility(constraint):
+  return "Uživatelé PirateID, kteří jsou členy skupiny \"%s\"" % constraint
+
 #
 # Election Creation
 #
