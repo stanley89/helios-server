@@ -103,7 +103,7 @@ def list_category_members(category_id):
   return users
 
 def pretty_eligibility(constraint):
-  return "Uživatelé PirateID, kteří jsou členy skupiny \"%s\"" % constraint
+  return "Uzivatele PirateID ve skupine \"%s\"" % constraint
 
 #
 # Election Creation
