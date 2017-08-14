@@ -103,7 +103,9 @@ def list_category_members(category_id):
   return users
 
 def pretty_eligibility(constraint):
-  return "Uzivatele PirateID ve skupine \"%s\"" % constraint
+  group = json.load(urllib2.urlopen("https://graph.pirati.cz/" + constraint))
+
+  return "PirateID users in \"%s\" group" % group[u'username']
 
 #
 # Election Creation
