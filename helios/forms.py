@@ -20,9 +20,9 @@ class ElectionForm(forms.Form):
   private_p = forms.BooleanField(required=False, initial=False, label="Private?", help_text='A private election is only visible to registered voters.')
   help_email = forms.CharField(required=False, initial="", label="Help Email Address", help_text='An email address voters should contact if they need help.')
   voting_starts_at = forms.SplitDateTimeField(help_text = 'UTC date and time when voting begins',
-                                   widget=forms.SplitDateTimeWidget, required=False)
+                                   widget=SplitSelectDateTimeWidget, required=False)
   voting_ends_at = forms.SplitDateTimeField(help_text = 'UTC date and time when voting ends',
-                                   widget=forms.SplitDateTimeWidget, required=False)
+                                   widget=SplitSelectDateTimeWidget, required=False)
   
   if settings.ALLOW_ELECTION_INFO_URL:
     election_info_url = forms.CharField(required=False, initial="", label="Election Info Download URL", help_text="the URL of a PDF document that contains extra election information, e.g. candidate bios and statements")
