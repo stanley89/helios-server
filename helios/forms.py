@@ -5,7 +5,7 @@ Forms for Helios
 from django import forms
 from models import Election
 #from widgets import *
-from fields import SplitSelectDateTimeWidget
+from fields import SplitSelectDateTimeWidget, SplitDateTimeField
 from django.conf import settings
 
 
@@ -19,9 +19,9 @@ class ElectionForm(forms.Form):
   randomize_answer_order = forms.BooleanField(required=False, initial=False, help_text='enable this if you want the answers to questions to appear in random order for each voter')
   private_p = forms.BooleanField(required=False, initial=False, label="Private?", help_text='A private election is only visible to registered voters.')
   help_email = forms.CharField(required=False, initial="", label="Help Email Address", help_text='An email address voters should contact if they need help.')
-  voting_starts_at = forms.SplitDateTimeField(help_text = 'UTC date and time when voting begins',
+  voting_starts_at = SplitDateTimeField(help_text = 'UTC date and time when voting begins',
                                    widget=SplitSelectDateTimeWidget, required=False)
-  voting_ends_at = forms.SplitDateTimeField(help_text = 'UTC date and time when voting ends',
+  voting_ends_at = SplitDateTimeField(help_text = 'UTC date and time when voting ends',
                                    widget=SplitSelectDateTimeWidget, required=False)
   
   if settings.ALLOW_ELECTION_INFO_URL:
@@ -35,7 +35,7 @@ class ElectionForm(forms.Form):
   pass
   
 class ElectionTimeExtensionForm(forms.Form):
-  voting_extended_until = forms.SplitDateTimeField(help_text = 'UTC date and time voting extended to',
+  voting_extended_until = SplitDateTimeField(help_text = 'UTC date and time voting extended to',
                                    widget=SplitSelectDateTimeWidget, required=False)
   
 class EmailVotersForm(forms.Form):
