@@ -1,5 +1,5 @@
 {% extends TEMPLATE_BASE %}
-{% block title %}Confirm Vote{% endblock %}
+{% block title %}Potvrďte svůj hlas{% endblock %}
 
 {% block content %}
 <script language="javascript">
@@ -24,7 +24,7 @@ window.onbeforeunload = function(evt) {
     evt = window.event;
   }
   
-  var message = "You have not yet cast your ballot! Make sure to complete the voting process if you want your vote to count.";
+  var message = "Ještě jste neodevzdal svůj hlasovací lístek! Chcete-li, aby váš hlas byl započten, musíte hlasovací proces dokončit.";
 
   if (evt) {
     evt.returnValue = message;
@@ -34,10 +34,10 @@ window.onbeforeunload = function(evt) {
 };
 
 </script>
-<p style="margin-top: 10px">Submitting your vote for <b>{{election.name}}</b>...</p>
+<p style="margin-top: 10px">Odesílám váš hlas v hlasování <b>{{election.name}}</b>...</p>
 
 <div id="waiting_div">
-    Verifying and Casting your ballot<br />
+    Kontroluji a odevzdávám váš hlasovací lístek<br />
     <img src="/static/helios/loading.gif" />
 </div>
 
@@ -51,10 +51,10 @@ window.onbeforeunload = function(evt) {
 
 {% if show_password %}
 {% if user %}
-<h1>Wait!</h1>
+<h1>Pozor!</h1>
 <p>
-You are logged in as <u>{{user.display_html_small|safe}}</u>, but this election<br />
-requires election-specific credentials.
+Jste přihlášen jako <u>{{user.display_html_small|safe}}</u>, ale toto hlasování<br />
+vyžaduje speciální oprávnění.
 </p>
 {% endif %}
 {% with cast_ballot="1" %}
@@ -64,42 +64,42 @@ requires election-specific credentials.
 {% else %}
 
 {% if user %}
-<h1>Sorry!<h1>
-<b>Sorry, you are <em>
+<h1>Je nám líto!<h1>
+<b>Bohužel <em>
   {% if election.openreg %}
-    <u>not eligible</u></em> for this election.
+    <u>nejste oprávněn</u></em> hlasovat v tomto hlasování.
   {% else %}
-    not registered</em> for this election, and registration is closed.
+    nejste oprávněným voličem</em> pro toto hlasování a registrace voličů byly uzavřeny.
   {% endif %}
   </b><br /></p>
 <p>
-    [<a href="{% url "helios.views.one_election_view" election.uuid %}">return to the main election page</a>]
+    [<a href="{% url "helios.views.one_election_view" election.uuid %}">návrat na úvodní stránku hlasování</a>]
 </p>
 {% else %}
 <p>
-<h1>Wait!  You need to log in.</h1>
+<h1>Pozor!  Musíte se přihlásit.</h1>
 {% if election.openreg %}
 
   {% if election.eligibility %}
   {% else %}
-   This election is open to <em>anyone</em>, so log in with your preferred account.
+   Tohoto hlasování se může zúčastnit <em>kdokoli</em>, přihlaste se tedy uživatelským účtem, kterému dáváte přednost.
   {% endif %}
 
 {% else %}
-  This election is only open to <em>registered voters</em>, so log in with
-  the same account you registered with.
+  Tohoto hlasování se mohou zúčastnit pouze <em>oprávnění voliči</em>, přihlaste se tedy 
+  takovým uživatelským účtem, který vás opravňuje volit.
 {% endif %}
 </p>
 
 {{login_box|safe}}
 
 <br />
-Don't worry, we'll remember your ballot while you log in.
+Nemusíte mít obavy, svůj vyplněný hlasovací lístek budete mít k dispozici i po přihlášení.
 {% endif %}
 
 {% endif %}
 <br />
-Your smart ballot tracker is:<br /><br />
+Váš kód pro sledování hlasovacího lístku je:<br /><br />
     <tt style="font-size:1.3em; font-weight: bold; padding-left: 20px;">  {{vote_fingerprint}}</tt>
 </p>
 {# this closes the IF ELSE of this being password_only #}
