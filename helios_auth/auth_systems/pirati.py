@@ -95,9 +95,7 @@ def list_category_members(category_id):
   members = json.load(urllib2.urlopen("https://graph.pirati.cz/" + category_id + "/members"))
   users = []
   for member in members:
-    user = json.load(urllib2.urlopen("https://graph.pirati.cz/" + member[u'id']))
-    users.append({'type': 'pirati', 'id': user[u'username_clean'], 'name': user[u'username'], 'info': {'email': user[u'email']}, 'token': {}})
-
+    users.append({'type': 'pirati', 'id': member[u'username'], 'name': member[u'username'], 'info': {'email': member[u'email']}, 'token': {}})
   return users
 
 def pretty_eligibility(constraint):
