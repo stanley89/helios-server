@@ -20,9 +20,9 @@ STATUS_UPDATES = False
 
 # display tweaks
 LOGIN_MESSAGE = "Přihlásit se pirátskou identitou"
-PIRATI_ENDPOINT_URL = 'https://auth2.pirati.cz/auth/realms/pirati/protocol/openid-connect/auth'
-PIRATI_TOKEN_URL = 'https://auth2.pirati.cz/auth/realms/pirati/protocol/openid-connect/token'
-PIRATI_USERINFO_URL = 'https://auth2.pirati.cz/auth/realms/pirati/protocol/openid-connect/userinfo'
+PIRATI_ENDPOINT_URL = 'https://auth.pirati.cz/auth/realms/pirati/protocol/openid-connect/auth'
+PIRATI_TOKEN_URL = 'https://auth.pirati.cz/auth/realms/pirati/protocol/openid-connect/token'
+PIRATI_USERINFO_URL = 'https://auth.pirati.cz/auth/realms/pirati/protocol/openid-connect/userinfo'
 
 def get_auth_url(request, redirect_url):
   oauth = OAuth2Session(settings.PIRATI_CLIENT_ID, redirect_uri=redirect_url)
