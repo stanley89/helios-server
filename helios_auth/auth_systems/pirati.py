@@ -27,15 +27,13 @@ PIRATI_USERINFO_URL = 'https://auth.pirati.cz/auth/realms/pirati/protocol/openid
 def get_auth_url(request, redirect_url):
   oauth = OAuth2Session(settings.PIRATI_CLIENT_ID, redirect_uri=redirect_url)
   url, state = oauth.authorization_url(PIRATI_ENDPOINT_URL)
-  request.session['redirect_url'] = redirect_url
   return url
 
 def get_user_info_after_auth(request):
-  oauth = OAuth2Session(settings.PIRATI_CLIENT_ID, redirect_uri=request.session['redirect_url'])
+  oauth = OAuth2Session(settings.PIRATI_CLIENT_ID)
   token = oauth.fetch_token(PIRATI_TOKEN_URL, client_secret=settings.PIRATI_CLIENT_SECRET,code=request.GET['code'])
   response = oauth.get(PIRATI_USERINFO_URL)
   data = response.json()
-  print data
   return {'type' : 'pirati', 'user_id': data['preferred_username'], 'name': data['name'], 'info': {'email': data['email']}, 'token':{}}
     
 def do_logout(user):
