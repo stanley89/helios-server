@@ -11,6 +11,6 @@ script: "python manage.py test"
 services:
   - postgresql
 addons:
-  postgresql: "9.3"
+  postgresql: "9.6"
 before_script:
   - psql -c 'create database helios;' -U postgres
